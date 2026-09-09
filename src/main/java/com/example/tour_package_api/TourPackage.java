@@ -47,4 +47,7 @@ public class TourPackage {
     private String state;
     public String getState() { return state; }
     public void setState(String state) { this.state = state; }
+    private String tripDate;
+    public String getTripDate() { return tripDate; }
+    public void setTripDate(String tripDate) { this.tripDate = tripDate; }
 }

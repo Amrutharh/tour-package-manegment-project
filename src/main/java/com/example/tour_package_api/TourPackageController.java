@@ -100,6 +100,12 @@ public class TourPackageController {
         t.setId(id); t.setName(name); t.setDestination(dest); t.setState(state); t.setPrice(price);
         t.setCategory(cat); t.setImageUrl(img); t.setHotel(hotel); t.setBus(bus); t.setRating(rating);
         t.setPlaces(places); t.setResorts(resorts);
+        java.util.Map<Long,String> dates = new java.util.HashMap<>();
+        dates.put(1L,"2026-10-15"); dates.put(2L,"2026-10-18"); dates.put(3L,"2026-10-20");
+        dates.put(4L,"2026-10-22"); dates.put(5L,"2026-10-25"); dates.put(6L,"2026-11-01");
+        dates.put(7L,"2026-11-05"); dates.put(8L,"2026-11-08"); dates.put(9L,"2026-11-10");
+        dates.put(10L,"2026-11-12"); dates.put(11L,"2026-11-15"); dates.put(12L,"2026-11-18");
+        t.setTripDate(dates.getOrDefault(id, "2026-10-15"));
         return t;
     }
 }
