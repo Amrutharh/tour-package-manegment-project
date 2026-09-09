@@ -21,11 +21,17 @@ button:hover{transform:scale(1.05)}
 .book input,.book select{width:90%;padding:9px;margin:6px;border-radius:10px;border:1px solid #aaa}
 #msg{color:green;font-weight:bold}
 #blist{font-size:14px;color:#555}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10;justify-content:center;align-items:center}
+.popup{background:white;border-radius:20px;padding:25px;width:400px;max-width:90vw;max-height:85vh;overflow:auto;text-align:left;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.popup h2{margin-top:0;color:#4a148c;text-align:center}
+.popup img{width:100%;height:180px;object-fit:cover;border-radius:12px}
+.close{background:#ff5252;color:white;border:none;border-radius:20px;padding:8px 25px;cursor:pointer;font-size:15px;display:block;margin:15px auto 0}
 </style></head>
 <body>
 <header><h1>✈️ South India Tours</h1><p>12 famous places • Hotels + Bus included • Find + Book</p></header>
 <div class="search"><input id="q" placeholder="Search Goa, Coorg, temple, beach..." oninput="render()"></div>
 <div class="grid" id="grid"></div>
+<div class="modal" id="modal" onclick="if(event.target==this)closePop()"><div class="popup" id="pop"></div></div>
 <div class="book">
 <h3>📝 Book Tour</h3>
 <select id="tour"></select><br>
@@ -59,8 +65,17 @@ function render(){
 }
 async function detail(id){
   let r=await fetch('/api/tours/'+id); let t=await r.json();
-  alert('📍 '+t.name+'\n\nFamous places:\n- '+t.places.split(',').join('\n- ')+'\n\nTop resorts:\n- '+t.resorts.split(',').join('\n- ')+'\n\n🏨 '+t.hotel+'\n🚌 '+t.bus);
+  document.getElementById('pop').innerHTML=`
+    <h2>📍 ${t.name}</h2>
+    <img src="${t.imageUrl}" onerror="this.style.display='none'">
+    <p>📍 ${t.destination}, ${t.state} • ${t.category} • ⭐ ${t.rating} • <b style="color:green">Rs.${t.price}</b></p>
+    <p><b>🌟 Famous places:</b><br>✅ ${t.places.split(',').join('<br>✅ ')}</p>
+    <p><b>🏨 Top resorts:</b><br>🏨 ${t.resorts.split(',').join('<br>🏨 ')}</p>
+    <p>🚌 ${t.bus}</p>
+    <button class="close" onclick="closePop()">Close ✖</button>`;
+  document.getElementById('modal').style.display='flex';
 }
+function closePop(){document.getElementById('modal').style.display='none';}
 async function book(){
   let tourId=document.getElementById('tour').value;
   let name=document.getElementById('name').value;
