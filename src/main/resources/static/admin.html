@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bookings Admin</title>
+<style>body{font-family:Arial;background:#f0f2f5;margin:0;padding:20px}h1{text-align:center;color:#4a148c}table{margin:20px auto;border-collapse:collapse;background:white;box-shadow:0 5px 20px rgba(0,0,0,0.2);width:90%;max-width:800px}th,td{border:1px solid #ddd;padding:10px;text-align:center}th{background:#6a11cb;color:white}a{display:block;text-align:center;margin:10px}</style></head>
+<body>
+<h1>📋 All Bookings (Admin)</h1>
+<a href="/">← Back to Tours</a>
+<table><tr><th>ID</th><th>Name</th><th>Tour ID</th><th>People</th><th>Total Rs.</th><th>Date</th></tr><tbody id="b"></tbody></table>
+<script>
+async function load(){
+  let r=await fetch('/api/bookings'); let l=await r.json();
+  document.getElementById('b').innerHTML=l.length?l.map(x=>`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.tourId}</td><td>${x.numPeople}</td><td>${x.totalAmount}</td><td>${x.date}</td></tr>`).join(''):'<tr><td colspan=6>No bookings yet</td></tr>';
+}
+load(); setInterval(load,5000);
+</script>
+</body></html>
