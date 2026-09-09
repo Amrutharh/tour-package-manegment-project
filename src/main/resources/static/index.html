@@ -34,9 +34,11 @@ button:hover{transform:scale(1.05)}
 <div class="modal" id="modal" onclick="if(event.target==this)closePop()"><div class="popup" id="pop"></div></div>
 <div class="book">
 <h3>📝 Book Tour</h3>
-<select id="tour"></select><br>
+<select id="tour" onchange="calc()"></select><br>
 <input id="name" placeholder="Your name"><br>
 <input id="date" type="date"><br>
+<input id="people" type="number" min="1" value="2" oninput="calc()"><br>
+<p id="total" style="font-weight:bold;color:#4a148c"></p>
 <button onclick="book()">Book Now</button>
 <p id="msg"></p>
 <h4>My Bookings:</h4><div id="blist">-</div>
@@ -46,8 +48,8 @@ let tours=[];
 async function load(){
   let r=await fetch('/api/tours'); tours=await r.json();
   let sel=document.getElementById('tour');
-  sel.innerHTML=tours.map(t=>`<option value="${t.id}">${t.name} - Rs.${t.price}</option>`).join('');
-  render(); loadBookings();
+  sel.innerHTML=tours.map(t=>`<option value="${t.id}">${t.name} - Rs.${t.price}/person</option>`).join('');
+  render(); loadBookings(); calc();
 }
 function render(){
   let q=document.getElementById('q').value.toLowerCase();
@@ -76,20 +78,29 @@ async function detail(id){
   document.getElementById('modal').style.display='flex';
 }
 function closePop(){document.getElementById('modal').style.display='none';}
+function calc(){
+  let id=document.getElementById('tour').value;
+  let t=tours.find(x=>x.id==id);
+  let n=Number(document.getElementById('people').value||1);
+  if(t) document.getElementById('total').innerText=`👥 ${n} people x Rs.${t.price} = Total Rs.${t.price*n}`;
+}
 async function book(){
   let tourId=document.getElementById('tour').value;
   let name=document.getElementById('name').value;
   let date=document.getElementById('date').value;
+  let n=Number(document.getElementById('people').value||1);
   if(!name||!date){alert('Enter name and date');return;}
+  let t=tours.find(x=>x.id==tourId);
+  let total=t?t.price*n:0;
   let r=await fetch('/api/bookings',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({tourId:Number(tourId),name,date})});
+    body:JSON.stringify({tourId:Number(tourId),name,date,numPeople:n,totalAmount:total})});
   let b=await r.json();
-  document.getElementById('msg').innerText='✅ Booked! ID: '+b.id;
+  document.getElementById('msg').innerText=`✅ Booked! ID: ${b.id} Total Rs.${b.totalAmount}`;
   loadBookings();
 }
 async function loadBookings(){
   let r=await fetch('/api/bookings'); let list=await r.json();
-  document.getElementById('blist').innerHTML=list.length?list.map(b=>`#${b.id} ${b.name} - Tour ${b.tourId} on ${b.date}`).join('<br>'):'-';
+  document.getElementById('blist').innerHTML=list.length?list.map(b=>`#${b.id} ${b.name} - Tour ${b.tourId} x ${b.numPeople} = Rs.${b.totalAmount} on ${b.date}`).join('<br>'):'-';
 }
 load();
 </script>
