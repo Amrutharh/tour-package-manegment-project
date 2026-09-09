@@ -45,12 +45,21 @@ async function load(){
 }
 function render(){
   let q=document.getElementById('q').value.toLowerCase();
-  let f=tours.filter(t=>(t.name+t.destination+t.category+t.hotel).toLowerCase().includes(q));
-  document.getElementById('grid').innerHTML=f.map(t=>`
-   <div class="card"><div class="top"><img src="${t.imageUrl}" alt="${t.destination}" loading="lazy" onerror="this.style.display='none'"></div>
-   <div class="body"><h3>${t.name}</h3><p>📍 ${t.destination} • ${t.category} • <span class="rating">⭐ ${t.rating}</span></p>
-   <p class="price">Rs. ${t.price}</p>
-   <div class="meta">🏨 ${t.hotel}<br>🚌 ${t.bus}</div></div></div>`).join('')||'<p>No tours found</p>';
+  let f=tours.filter(t=>(t.name+t.destination+t.category+t.hotel+t.state).toLowerCase().includes(q));
+  let states=[...new Set(f.map(t=>t.state))];
+  document.getElementById('grid').innerHTML=states.map(s=>{
+    let cards=f.filter(t=>t.state==s).map(t=>`
+     <div class="card" onclick="detail(${t.id})" style="cursor:pointer"><div class="top"><img src="${t.imageUrl}" alt="${t.destination}" loading="lazy" onerror="this.style.display='none'"></div>
+     <div class="body"><h3>${t.name}</h3><p>📍 ${t.destination} • ${t.category} • <span class="rating">⭐ ${t.rating}</span></p>
+     <p class="price">Rs. ${t.price}</p>
+     <div class="meta">🏨 ${t.hotel}<br>🚌 ${t.bus}</div>
+     <p style="color:#6a11cb;font-size:13px">Click to see places + resorts 👆</p></div></div>`).join('');
+    return `<div style="width:100%;text-align:center"><h2 style="color:#4a148c;margin:20px 0 5px">📍 ${s}</h2><div style="display:flex;flex-wrap:wrap;gap:20px;justify-content:center">${cards}</div></div>`;
+  }).join('')||'<p>No tours found</p>';
+}
+async function detail(id){
+  let r=await fetch('/api/tours/'+id); let t=await r.json();
+  alert('📍 '+t.name+'\n\nFamous places:\n- '+t.places.split(',').join('\n- ')+'\n\nTop resorts:\n- '+t.resorts.split(',').join('\n- ')+'\n\n🏨 '+t.hotel+'\n🚌 '+t.bus);
 }
 async function book(){
   let tourId=document.getElementById('tour').value;

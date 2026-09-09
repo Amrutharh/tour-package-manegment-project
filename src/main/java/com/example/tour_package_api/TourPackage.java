@@ -38,4 +38,13 @@ public class TourPackage {
     public void setBus(String bus) { this.bus = bus; }
     public double getRating() { return rating; }
     public void setRating(double rating) { this.rating = rating; }
+    private String places;
+    private String resorts;
+    public String getPlaces() { return places; }
+    public void setPlaces(String places) { this.places = places; }
+    public String getResorts() { return resorts; }
+    public void setResorts(String resorts) { this.resorts = resorts; }
+    private String state;
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
 }
