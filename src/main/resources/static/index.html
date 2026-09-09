@@ -59,7 +59,7 @@ function render(){
     let cards=f.filter(t=>t.state==s).map(t=>`
      <div class="card" onclick="detail(${t.id})" style="cursor:pointer"><div class="top"><img src="${t.imageUrl}" alt="${t.destination}" loading="lazy" onerror="this.style.display='none'"></div>
      <div class="body"><h3>${t.name}</h3><p>📍 ${t.destination} • ${t.category} • <span class="rating">⭐ ${t.rating}</span></p>
-     <p class="price">Rs. ${t.price}</p>
+     <p class="price">Rs. ${t.price} <small>/person</small></p>
      <div class="meta">🏨 ${t.hotel}<br>🚌 ${t.bus}</div>
      <p style="color:#6a11cb;font-size:13px">Click to see places + resorts 👆</p></div></div>`).join('');
     return `<div style="width:100%;text-align:center"><h2 style="color:#4a148c;margin:20px 0 5px">📍 ${s}</h2><div style="display:flex;flex-wrap:wrap;gap:20px;justify-content:center">${cards}</div></div>`;
@@ -70,7 +70,7 @@ async function detail(id){
   document.getElementById('pop').innerHTML=`
     <h2>📍 ${t.name}</h2>
     <img src="${t.imageUrl}" onerror="this.style.display='none'">
-    <p>📍 ${t.destination}, ${t.state} • ${t.category} • ⭐ ${t.rating} • <b style="color:green">Rs.${t.price}</b></p>
+    <p>📍 ${t.destination}, ${t.state} • ${t.category} • ⭐ ${t.rating} • <b style="color:green">Rs.${t.price} /person</b></p>
     <p><b>🌟 Famous places:</b><br>✅ ${t.places.split(',').join('<br>✅ ')}</p>
     <p><b>🏨 Top resorts:</b><br>🏨 ${t.resorts.split(',').join('<br>🏨 ')}</p>
     <p>🚌 ${t.bus}</p>
@@ -105,3 +105,4 @@ async function loadBookings(){
 load();
 </script>
 </body></html>
+
