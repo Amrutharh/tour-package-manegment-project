@@ -5,11 +5,16 @@
 <body>
 <h1>📋 All Bookings (Admin)</h1>
 <a href="/">← Back to Tours</a>
-<table><tr><th>ID</th><th>Name</th><th>Tour ID</th><th>People</th><th>Total Rs.</th><th>Date</th></tr><tbody id="b"></tbody></table>
+<table><tr><th>Photo</th><th>ID</th><th>Name</th><th>Tour</th><th>People</th><th>Total Rs.</th><th>Date</th></tr><tbody id="b"></tbody></table>
 <script>
 async function load(){
-  let r=await fetch('/api/bookings'); let l=await r.json();
-  document.getElementById('b').innerHTML=l.length?l.map(x=>`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.tourId}</td><td>${x.numPeople}</td><td>${x.totalAmount}</td><td>${x.date}</td></tr>`).join(''):'<tr><td colspan=6>No bookings yet</td></tr>';
+  let [br, tr] = await Promise.all([fetch('/api/bookings'), fetch('/api/tours')]);
+  let l = await br.json(); let tours = await tr.json();
+  let map = {}; tours.forEach(t=>map[t.id]=t);
+  document.getElementById('b').innerHTML=l.length?l.map(x=>{
+    let t=map[x.tourId]||{name:'Tour '+x.tourId,imageUrl:''};
+    return `<tr><td><img src="${t.imageUrl}" width="80" height="50" style="object-fit:cover;border-radius:8px" onerror="this.style.display='none'"></td><td>${x.id}</td><td>${x.name}</td><td>${t.name}</td><td>${x.numPeople}</td><td>${x.totalAmount}</td><td>${x.date}</td></tr>`;
+  }).join(''):'<tr><td colspan=7>No bookings yet</td></tr>';
 }
 load(); setInterval(load,5000);
 </script>
