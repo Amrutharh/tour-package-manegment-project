@@ -13,6 +13,10 @@ public class TourPackage {
     private String destination;
     private double price;
     private String category;
+    private String imageUrl;
+    private String hotel;
+    private String bus;
+    private double rating;
 
     public TourPackage() {}
 
@@ -26,4 +30,12 @@ public class TourPackage {
     public void setPrice(double price) { this.price = price; }
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getHotel() { return hotel; }
+    public void setHotel(String hotel) { this.hotel = hotel; }
+    public String getBus() { return bus; }
+    public void setBus(String bus) { this.bus = bus; }
+    public double getRating() { return rating; }
+    public void setRating(double rating) { this.rating = rating; }
 }
