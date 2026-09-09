@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tour Packages ✈️</title>
+<style>
+body{font-family:'Segoe UI',Arial;margin:0;background:linear-gradient(135deg,#a8edea,#fed6e3);min-height:100vh}
+header{background:linear-gradient(90deg,#6a11cb,#2575fc);color:white;padding:20px;text-align:center}
+header h1{margin:0}
+.search{margin:15px;text-align:center}
+.search input{padding:10px 15px;border-radius:20px;border:2px solid #6a11cb;width:300px;max-width:80vw;font-size:15px}
+.grid{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;padding:20px}
+.card{background:white;border-radius:18px;width:280px;box-shadow:0 8px 25px rgba(0,0,0,0.2);overflow:hidden}
+.top{height:120px;display:flex;align-items:center;justify-content:center;font-size:60px;color:white}
+.beach{background:linear-gradient(135deg,#00c9ff,#92fe9d)}
+.hills{background:linear-gradient(135deg,#56ab2f,#a8e063)}
+.body{padding:15px;text-align:center}
+.price{color:#2e7d32;font-weight:bold;font-size:18px}
+button{background:linear-gradient(90deg,#ff758c,#ff7eb3);color:white;border:none;border-radius:20px;padding:10px 25px;cursor:pointer;font-size:15px;margin-top:8px}
+button:hover{transform:scale(1.05)}
+.book{background:white;margin:20px auto;padding:20px;border-radius:18px;width:350px;max-width:90vw;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,0.2)}
+.book input,.book select{width:90%;padding:9px;margin:6px;border-radius:10px;border:1px solid #aaa}
+#msg{color:green;font-weight:bold}
+#blist{font-size:14px;color:#555}
+</style></head>
+<body>
+<header><h1>✈️ Tour Packages</h1><p>Find + Book your trip</p></header>
+<div class="search"><input id="q" placeholder="Search Goa, beach, hills..." oninput="render()"></div>
+<div class="grid" id="grid"></div>
+<div class="book">
+<h3>📝 Book Tour</h3>
+<select id="tour"></select><br>
+<input id="name" placeholder="Your name"><br>
+<input id="date" type="date"><br>
+<button onclick="book()">Book Now</button>
+<p id="msg"></p>
+<h4>My Bookings:</h4><div id="blist">-</div>
+</div>
+<script>
+let tours=[];
+async function load(){
+  let r=await fetch('/api/tours'); tours=await r.json();
+  let sel=document.getElementById('tour');
+  sel.innerHTML=tours.map(t=>`<option value="${t.id}">${t.name} - Rs.${t.price}</option>`).join('');
+  render(); loadBookings();
+}
+function render(){
+  let q=document.getElementById('q').value.toLowerCase();
+  let f=tours.filter(t=>(t.name+t.destination+t.category).toLowerCase().includes(q));
+  document.getElementById('grid').innerHTML=f.map(t=>`
+   <div class="card"><div class="top ${t.category}">${t.category=='beach'?'🏖️':'🏔️'}</div>
+   <div class="body"><h3>${t.name}</h3><p>📍 ${t.destination} • ${t.category}</p>
+   <p class="price">Rs. ${t.price}</p></div></div>`).join('')||'<p>No tours found</p>';
+}
+async function book(){
+  let tourId=document.getElementById('tour').value;
+  let name=document.getElementById('name').value;
+  let date=document.getElementById('date').value;
+  if(!name||!date){alert('Enter name and date');return;}
+  let r=await fetch('/api/bookings',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tourId:Number(tourId),name,date})});
+  let b=await r.json();
+  document.getElementById('msg').innerText='✅ Booked! ID: '+b.id;
+  loadBookings();
+}
+async function loadBookings(){
+  let r=await fetch('/api/bookings'); let list=await r.json();
+  document.getElementById('blist').innerHTML=list.length?list.map(b=>`#${b.id} ${b.name} - Tour ${b.tourId} on ${b.date}`).join('<br>'):'-';
+}
+load();
+</script>
+</body></html>
